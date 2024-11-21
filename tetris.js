@@ -1,5 +1,5 @@
 basic.clearScreen()
-basic.showString("Welcome To Tertris")
+basic.showString("Welcome To Tetris, Press Button \"A\" to start")
 
 input.onButtonPressed(Button.A, function () {
     if (x > 0) {
