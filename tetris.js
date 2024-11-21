@@ -1,3 +1,6 @@
+basic.clearScreen()
+basic.showString("Welcome To Tertris")
+
 input.onButtonPressed(Button.A, function () {
     if (x > 0) {
         led.unplot(x, y)
