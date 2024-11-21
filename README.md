@@ -1,4 +1,4 @@
-# 🕹️ **Tetris on Micro:bit** 🕹️
+# 🕹️ **Tetris on Micro:bit** 🕹️ Credit to Tetris
 
 A fun and simple implementation of **Tetris** on the BBC Micro:bit! 🎮 This project brings the classic Tetris game to the Micro:bit's 5x5 LED grid, allowing you to play with the arrow buttons.
 
