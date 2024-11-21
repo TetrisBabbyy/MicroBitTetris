@@ -2,7 +2,7 @@
 
 A fun and simple implementation of **Tetris** on the BBC Micro:bit! 🎮 This project brings the classic Tetris game to the Micro:bit's 5x5 LED grid, allowing you to play with the arrow buttons.
 
-[Tetris on Micro:bit]([https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Tetris.svg/320px-Tetris.svg.png](https://makecode.microbit.org/_Akxg96hd6Dt3)](https://makecode.microbit.org/S52887-28770-14686-14592))
+![Tetris on Micro:bit]([https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Tetris.svg/320px-Tetris.svg.png](https://makecode.microbit.org/_Akxg96hd6Dt3)](https://makecode.microbit.org/S52887-28770-14686-14592))
 
 ## 🚀 **Project Overview**
 This project lets you play the iconic **Tetris** game on a Micro:bit! Using the built-in buttons, you can rotate and move the falling blocks as they descend. The goal is to fill up rows to clear them, just like in the original game.
