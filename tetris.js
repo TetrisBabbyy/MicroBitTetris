@@ -1,4 +1,4 @@
-function clearFullColumns () {
+function clearFullColumns() {
     for (let col3 = 0; col3 <= 4; col3++) {
         fullColumn = true
         for (let row2 = 0; row2 <= 4; row2++) {
@@ -29,7 +29,7 @@ input.onButtonPressed(Button.A, function () {
         x += 0 - 1
     }
 })
-function clearFullRows () {
+function clearFullRows() {
     for (let row = 0; row <= 4; row++) {
         fullRow = true
         for (let col = 0; col <= 4; col++) {
@@ -80,5 +80,16 @@ basic.forever(function () {
         clearFullColumns()
         y = 0
         x = 2
+    }
+})
+
+let melody = [
+    262, 262, 294, 349, 349, 349, 349, 349, 349, 294, 262, 262, 294, 349, 349, 349,
+    349, 349, 349, 294, 262, 262, 294, 349, 349, 349, 349, 349, 349, 294, 262
+]
+
+basic.forever(function () {
+    for (let note of melody) {
+        music.playTone(note, music.beat(BeatFraction.Half))
     }
 })
