@@ -18,7 +18,7 @@ This project lets you play the iconic **Tetris** game on a Micro:bit! Using the 
 ## 💡 **What You’ll Need**
 - 1x **BBC Micro:bit** (V1 or V2)
 - **USB Cable** to connect Micro:bit to your computer
-- **Mu Editor** (or any compatible editor) to upload the Python code to your Micro:bit.
+- **Mu Editor** (or any compatible editor) to upload the Javascript code to your Micro:bit.
 
 ## ⚙️ **Installation Instructions**
 
