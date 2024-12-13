@@ -1,12 +1,21 @@
-let fullRow = false
-let y = 0
-let fullColumn = false
-let x = 2
-let speed = 500
-basic.clearScreen()
-basic.pause(1000)
-
-function clearFullRows() {
+// Checks if the game is over (a column is full at the top row). If the column is full, then GAME OVER!!!!
+function checkGameOver () {
+    for (let col5 = 0; col5 <= 4; col5++) {
+        if (led.point(col5, 0)) {
+            gameOver()
+            return
+        }
+    }
+}
+// When the A button is pressed, move the LED left by one position.
+input.onButtonPressed(Button.A, function () {
+    if (x > 0) {
+        led.unplot(x, y)
+        x += 0 - 1
+    }
+})
+// This function handles the row clearing for when a row is full. If it is full, the row flashes and you gain 1 score.
+function clearFullRows () {
     for (let row = 0; row <= 4; row++) {
         fullRow = true
         for (let col = 0; col <= 4; col++) {
@@ -16,10 +25,11 @@ function clearFullRows() {
             }
         }
         if (fullRow) {
-            flashRow(row) 
+            flashRow(row)
             for (let col2 = 0; col2 <= 4; col2++) {
                 led.unplot(col2, row)
             }
+            score += 1
             for (let r = row; r > 0; r--) {
                 for (let c = 0; c < 5; c++) {
                     if (led.point(c, r - 1)) {
@@ -31,68 +41,30 @@ function clearFullRows() {
             }
         }
     }
+    checkGameOver()
 }
-
-function flashRow(row: number) {
-    for (let i = 0; i < 3; i++) {
-        for (let col = 0; col <= 4; col++) {
-            led.plot(col, row)
+// This function flashes a row before clearing it.
+function flashRow (row: number) {
+    for (let index = 0; index < 3; index++) {
+        for (let col3 = 0; col3 <= 4; col3++) {
+            led.plot(col3, row)
         }
-        basic.pause(100)  
-        for (let col = 0; col <= 4; col++) {
-            led.unplot(col, row)
+        basic.pause(100)
+        for (let col4 = 0; col4 <= 4; col4++) {
+            led.unplot(col4, row)
         }
-        basic.pause(100) 
+        basic.pause(100)
     }
 }
-
-function clearFullColumns() {
-    for (let col3 = 0; col3 <= 4; col3++) {
-        fullColumn = true
-        for (let row2 = 0; row2 <= 4; row2++) {
-            if (!(led.point(col3, row2))) {
-                fullColumn = false
-                break;
-            }
-        }
-        if (fullColumn) {
-            flashColumn(col3)  
-            for (let row3 = 0; row3 <= 4; row3++) {
-                led.unplot(col3, row3)
-            }
-            for (let d = col3; d < 4; d++) {
-                for (let s = 0; s < 5; s++) {
-                    if (led.point(d + 1, s)) {
-                        led.plot(d, s)
-                    } else {
-                        led.unplot(d, s)
-                    }
-                }
-            }
-        }
-    }
+// Displays a game-over screen and stops the game with also showing what your score was.
+function gameOver () {
+    basic.clearScreen()
+    basic.showString("GAME OVER SCORE")
+    basic.showString("" + (score))
+    // Restart the game after displaying "GAME OVER".
+    control.reset()
 }
-
-function flashColumn(col: number) {
-    for (let i = 0; i < 3; i++) {
-        for (let row = 0; row <= 4; row++) {
-            led.plot(col, row)
-        }
-        basic.pause(100)  
-        for (let row = 0; row <= 4; row++) {
-            led.unplot(col, row)
-        }
-        basic.pause(100)  
-    }
-}
-
-input.onButtonPressed(Button.A, function () {
-    if (x > 0) {
-        led.unplot(x, y)
-        x += 0 - 1
-    }
-})
-
+// When the B button is pressed, move the LED right by one position.
 input.onButtonPressed(Button.B, function () {
     if (x < 4) {
         led.unplot(x, y)
@@ -100,21 +72,17 @@ input.onButtonPressed(Button.B, function () {
         led.plot(x, y)
     }
 })
-
-basic.forever(function () {
-    led.plot(x, y)
-    basic.pause(speed)
-    if (y < 4 && !(led.point(x, y + 1))) {
-        led.unplot(x, y)
-        y += 1
-    } else {
-        clearFullRows()
-        clearFullColumns()
-        y = 0
-        x = 2
-    }
-})
-
+/**
+ * Sets the speed of the moving LED and has a 1 second pause before the LED falls
+ */
+let score = 0
+let fullRow = false
+let y = 0
+let x = 0
+let speed = 500
+basic.clearScreen()
+basic.pause(1000)
+// Plays the Tetris theme song forever.
 basic.forever(function () {
     music.playTone(330, music.beat(BeatFraction.Whole))
     music.playTone(247, music.beat(BeatFraction.Half))
@@ -151,3 +119,17 @@ basic.forever(function () {
     music.playTone(247, music.beat(BeatFraction.Whole))
     music.playTone(247, music.beat(BeatFraction.Half))
 })
+// Handles the LED falling down the grid.
+basic.forever(function () {
+    led.plot(x, y)
+    basic.pause(speed)
+    if (y < 4 && !(led.point(x, y + 1))) {
+        led.unplot(x, y)
+        y += 1
+    } else {
+        clearFullRows()
+        y = 0
+        x = 2
+    }
+})
+
