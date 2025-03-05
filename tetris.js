@@ -1,3 +1,6 @@
+/**
+ * Sets the speed of the moving LED and has a 1 second pause before the LED falls
+ */
 // Checks if the game is over (a column is full at the top row). If the column is full, then GAME OVER!!!!
 function checkGameOver () {
     for (let col5 = 0; col5 <= 4; col5++) {
@@ -72,9 +75,6 @@ input.onButtonPressed(Button.B, function () {
         led.plot(x, y)
     }
 })
-/**
- * Sets the speed of the moving LED and has a 1 second pause before the LED falls
- */
 let score = 0
 let fullRow = false
 let y = 0
@@ -131,5 +131,14 @@ basic.forever(function () {
         y = 0
         x = 2
     }
+
+    let spaceFilled = false
+
+    if (x, y < 4 && !(led.point(x, y + 1))) {
+        led.plot(x, y)
+    }
 })
+
+
+
 
