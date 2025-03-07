@@ -1,5 +1,120 @@
-// Checks if the game is over (a column is full at the top row). If the column is full, then GAME OVER!!!!
-function checkGameOver () {
+let score = 0
+let fullRow = false
+let y = 0
+let x = 2
+let currentShape: number[][] = []
+let rotationState = 0
+let speed = 500
+
+// Define smaller Tetris shapes (3x3, 2x2, etc.)
+const shapes = [
+    // Square Shape (2x2)
+    [
+        [1, 0],
+        [1, 0]
+    ],
+    // 1x1 shape
+    [
+        [1]
+    ],
+    // 2x1 shape
+    [
+        [1, 1]
+    ]
+]
+
+// Function to get a random shape from the defined shapes
+function getRandomShape(): number[][] {
+    let shapeIndex = Math.randomRange(0, shapes.length - 1)
+    return shapes[shapeIndex]
+}
+
+// Function to draw the shape on the grid
+function drawShape(x: number, y: number, shape: number[][]) {
+    for (let i = 0; i < shape.length; i++) {
+        for (let j = 0; j < shape[i].length; j++) {
+            if (shape[i][j] == 1) {
+                led.plot(x + j, y + i)
+            }
+        }
+    }
+}
+
+// Function to clear the shape from the grid
+function clearShape(x: number, y: number, shape: number[][]) {
+    for (let i = 0; i < shape.length; i++) {
+        for (let j = 0; j < shape[i].length; j++) {
+            if (shape[i][j] == 1) {
+                led.unplot(x + j, y + i)
+            }
+        }
+    }
+}
+
+// Function to rotate the shape 90 degrees clockwise
+function rotateShape(shape: number[][]): number[][] {
+    let rotatedShape: number[][] = []
+    let newSize = shape[0].length
+    for (let i = 0; i < newSize; i++) {
+        let newRow = []
+        for (let j = shape.length - 1; j >= 0; j--) {
+            newRow.push(shape[j][i])
+        }
+        rotatedShape.push(newRow)
+    }
+    return rotatedShape
+}
+
+// Function to check if the shape can be rotated
+function canRotate(x: number, y: number, shape: number[][]): boolean {
+    // Temporarily clear the shape from the grid to test
+    clearShape(x, y, shape)
+
+    // Try rotating and check if the new position is valid
+    let rotated = rotateShape(shape)
+    for (let i = 0; i < rotated.length; i++) {
+        for (let j = 0; j < rotated[i].length; j++) {
+            if (rotated[i][j] == 1) {
+                if (x + j < 0 || x + j >= 5 || y + i >= 5 || led.point(x + j, y + i)) {
+                    clearShape(x, y, rotated)
+                    return false
+                }
+            }
+        }
+    }
+    return true
+}
+
+// Handle button presses for rotation
+input.onButtonPressed(Button.AB, function () {
+    let newShape = rotateShape(currentShape)
+    if (canRotate(x, y, newShape)) {
+        clearShape(x, y, currentShape)
+        currentShape = newShape
+        drawShape(x, y, currentShape)
+    }
+})
+
+// Function to handle falling shapes
+basic.forever(function () {
+    drawShape(x, y, currentShape)
+    basic.pause(speed)
+
+    // Check if the falling LED is at the bottom or collides with an existing shape
+    if (y + currentShape.length < 5 && !led.point(x, y + currentShape.length)) {
+        clearShape(x, y, currentShape)
+        y += 1
+    } else {
+        // When the block stops, check for full rows and spawn new shape
+        clearFullRows()
+        currentShape = getRandomShape()
+        x = 2
+        y = 0
+    }
+})
+
+// Check if a column at the top is full and ends the game if so
+function checkGameOver() {
     for (let col5 = 0; col5 <= 4; col5++) {
         if (led.point(col5, 0)) {
             gameOver()
@@ -7,22 +122,33 @@ function checkGameOver () {
         }
     }
 }
+
 // When the A button is pressed, move the LED left by one position.
 input.onButtonPressed(Button.A, function () {
     if (x > 0 && !(led.point(x - 1, y))) {
-        led.unplot(x, y)
-        x += 0 - 1
-        led.plot(x, y)
+        clearShape(x, y, currentShape)
+        x -= 1
+        drawShape(x, y, currentShape)
     }
 })
+
+// When the B button is pressed, move the LED right by one position.
+input.onButtonPressed(Button.B, function () {
+    if (x + currentShape[0].length < 5 && !(led.point(x + currentShape[0].length, y))) {
+        clearShape(x, y, currentShape)
+        x += 1
+        drawShape(x, y, currentShape)
+    }
+})
+
 // This function handles the row clearing for when a row is full. If it is full, the row flashes and you gain 1 score.
-function clearFullRows () {
+function clearFullRows() {
     for (let row = 0; row <= 4; row++) {
         fullRow = true
         for (let col = 0; col <= 4; col++) {
             if (!(led.point(col, row))) {
                 fullRow = false
-                break;
+                break
             }
         }
         if (fullRow) {
@@ -44,8 +170,9 @@ function clearFullRows () {
     }
     checkGameOver()
 }
+
 // This function flashes a row before clearing it.
-function flashRow (row: number) {
+function flashRow(row: number) {
     for (let index = 0; index < 3; index++) {
         for (let col3 = 0; col3 <= 4; col3++) {
             led.plot(col3, row)
@@ -57,22 +184,16 @@ function flashRow (row: number) {
         basic.pause(100)
     }
 }
+
 // Displays a game-over screen and stops the game with also showing what your score was.
-function gameOver () {
+function gameOver() {
     basic.clearScreen()
     basic.showString("GAME OVER SCORE")
-    basic.showString("" + (score))
+    basic.showString("" + score)
     // Restart the game after displaying "GAME OVER".
     control.reset()
 }
-// When the B button is pressed, move the LED right by one position.
-input.onButtonPressed(Button.B, function () {
-    if (x < 4 && !(led.point(x + 1, y))) {
-        led.unplot(x, y)
-        x += 1
-        led.plot(x, y)
-    }
-})
+
 input.onGesture(Gesture.Shake, function () {
     if (music.volume() > 1) {
         music.setVolume(0)
@@ -80,14 +201,13 @@ input.onGesture(Gesture.Shake, function () {
         music.setVolume(127)
     }
 })
-let score = 0
-let fullRow = false
-let y = 0
-let x = 0
-x = 2
-let speed = 500
+
 basic.clearScreen()
 basic.pause(1000)
+
+// Start the game with a random shape
+currentShape = getRandomShape()
+
 // Plays the Tetris theme song forever.
 basic.forever(function () {
     music.playTone(330, music.beat(BeatFraction.Whole))
@@ -125,30 +245,4 @@ basic.forever(function () {
     music.playTone(247, music.beat(BeatFraction.Whole))
     music.playTone(247, music.beat(BeatFraction.Half))
 })
-// Handles the LED falling down the grid.
-basic.forever(function () {
-    led.plot(x, y)
-    basic.pause(speed)
-    // If the falling LED is not at the bottom and the space below it is empty, move it down.
-    // If the falling LED reaches the floor or encounters another LED, stop the fall.
-    if (y < 4 && !(led.point(x, y + 1))) {
-        led.unplot(x, y)
-        y += 1
-    } else {
-        clearFullRows()
-        y = 0
-        // Reset x to the middle position after falling
-        x = 2
-    }
-    // Prevent the falling LED from moving past another LED to the left or right when on the floor.
-    if (y == 4) {
-        if (x > 0 && led.point(x - 1, y)) {
-            // Prevent movement past LED on left
-            x = x
-        }
-        if (x < 4 && led.point(x + 1, y)) {
-            // Prevent movement past LED on right
-            x = x
-        }
-    }
-})
+
