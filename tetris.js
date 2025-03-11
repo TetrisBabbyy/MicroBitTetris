@@ -6,20 +6,15 @@ let currentShape: number[][] = []
 let rotationState = 0
 let speed = 500
 
-// Define smaller Tetris shapes (3x3, 2x2, etc.)
 const shapes = [
-    // Square Shape (2x2)
-    [
-        [1, 0],
-        [1, 0]
-    ],
     // 1x1 shape
     [
         [1]
     ],
-    // 2x1 shape
+    // 2x1 shape (always vertical)
     [
-        [1, 1]
+        [1],
+        [1]
     ]
 ]
 
@@ -87,7 +82,11 @@ function canRotate(x: number, y: number, shape: number[][]): boolean {
 
 // Handle button presses for rotation
 input.onButtonPressed(Button.AB, function () {
-    let newShape = rotateShape(currentShape)
+    rotationState = (rotationState + 90) % 360
+    let newShape = currentShape
+    for (let i = 0; i < rotationState / 90; i++) {
+        newShape = rotateShape(newShape)
+    }
     if (canRotate(x, y, newShape)) {
         clearShape(x, y, currentShape)
         currentShape = newShape
@@ -245,4 +244,3 @@ basic.forever(function () {
     music.playTone(247, music.beat(BeatFraction.Whole))
     music.playTone(247, music.beat(BeatFraction.Half))
 })
-
