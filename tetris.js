@@ -11,10 +11,12 @@ const shapes = [
     [
         [1]
     ],
-    // 2x1 shape (always vertical)
     [
         [1],
         [1]
+    ],
+    [
+        [1, 1]
     ]
 ]
 
@@ -46,54 +48,6 @@ function clearShape(x: number, y: number, shape: number[][]) {
     }
 }
 
-// Function to rotate the shape 90 degrees clockwise
-function rotateShape(shape: number[][]): number[][] {
-    let rotatedShape: number[][] = []
-    let newSize = shape[0].length
-    for (let i = 0; i < newSize; i++) {
-        let newRow = []
-        for (let j = shape.length - 1; j >= 0; j--) {
-            newRow.push(shape[j][i])
-        }
-        rotatedShape.push(newRow)
-    }
-    return rotatedShape
-}
-
-// Function to check if the shape can be rotated
-function canRotate(x: number, y: number, shape: number[][]): boolean {
-    // Temporarily clear the shape from the grid to test
-    clearShape(x, y, shape)
-
-    // Try rotating and check if the new position is valid
-    let rotated = rotateShape(shape)
-    for (let i = 0; i < rotated.length; i++) {
-        for (let j = 0; j < rotated[i].length; j++) {
-            if (rotated[i][j] == 1) {
-                if (x + j < 0 || x + j >= 5 || y + i >= 5 || led.point(x + j, y + i)) {
-                    clearShape(x, y, rotated)
-                    return false
-                }
-            }
-        }
-    }
-    return true
-}
-
-// Handle button presses for rotation
-input.onButtonPressed(Button.AB, function () {
-    rotationState = (rotationState + 90) % 360
-    let newShape = currentShape
-    for (let i = 0; i < rotationState / 90; i++) {
-        newShape = rotateShape(newShape)
-    }
-    if (canRotate(x, y, newShape)) {
-        clearShape(x, y, currentShape)
-        currentShape = newShape
-        drawShape(x, y, currentShape)
-    }
-})
-
 // Function to handle falling shapes
 basic.forever(function () {
     drawShape(x, y, currentShape)
@@ -109,6 +63,14 @@ basic.forever(function () {
         currentShape = getRandomShape()
         x = 2
         y = 0
+
+        // Increase speed after every 5 points
+        if (score % 5 === 0 && score !== 0) {
+            speed -= 50  // Decrease speed to make blocks fall faster
+            if (speed < 100) {
+                speed = 100  // Set a minimum speed to avoid the blocks falling too fast
+            }
+        }
     }
 })
 
@@ -125,18 +87,18 @@ function checkGameOver() {
 // When the A button is pressed, move the LED left by one position.
 input.onButtonPressed(Button.A, function () {
     if (x > 0 && !(led.point(x - 1, y))) {
-        clearShape(x, y, currentShape)
+        clearShape(x, y, currentShape) // Clear the current shape
         x -= 1
-        drawShape(x, y, currentShape)
+        drawShape(x, y, currentShape)  // Draw the shape in the new position
     }
 })
 
 // When the B button is pressed, move the LED right by one position.
 input.onButtonPressed(Button.B, function () {
     if (x + currentShape[0].length < 5 && !(led.point(x + currentShape[0].length, y))) {
-        clearShape(x, y, currentShape)
+        clearShape(x, y, currentShape) // Clear the current shape
         x += 1
-        drawShape(x, y, currentShape)
+        drawShape(x, y, currentShape)  // Draw the shape in the new position
     }
 })
 
