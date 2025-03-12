@@ -72,6 +72,11 @@ basic.forever(function () {
             }
         }
     }
+
+    if (x + currentShape.length < 5 && !led.point(x, y + currentShape.length)) {
+        clearShape(x, y, currentShape)
+
+    }
 })
 
 function checkGameOver() {
