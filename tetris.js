@@ -74,13 +74,9 @@ basic.forever(function () {
     }
 })
 
-// Check if a column at the top is full and ends the game if so
 function checkGameOver() {
-    for (let col5 = 0; col5 <= 4; col5++) {
-        if (led.point(col5, 0)) {
-            gameOver()
-            return
-        }
+    if (led.point(2, 0)) {  // Check if the topmost position in column 2 is occupied
+        gameOver()
     }
 }
 
